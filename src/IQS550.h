@@ -52,6 +52,11 @@ private:
 	uint8_t reset_pin;
 	uint8_t x;
 	uint8_t y;
+	uint16_t 	ui16Timeout = 100;  // Timeout on i2c in ms
+	uint8_t 	ui8Success;
+	uint32_t 	ui32StartTime;
+	uint8_t 	Data_Buff[44];
+	uint16_t	ui16SnapStatus[15], ui16PrevSnap[15];;
 };
 
 
