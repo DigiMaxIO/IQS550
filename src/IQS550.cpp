@@ -279,12 +279,12 @@ uint8_t IQS550::I2C_Write(uint16_t ui16RegisterAddress, uint8_t *pData, uint8_t 
 	
 	if(ui8Success)
 	{
-		return(TRUE);
+		return(true);
 	}
 	else
 	{
 		Serial.println("Comms write error");
-		return(FALSE);
+		return(false);
 	}
 }
 
@@ -305,12 +305,12 @@ uint8_t IQS550::I2C_Read(uint16_t ui16RegisterAddress, uint8_t *pData, uint8_t u
 	
 	if(ui8Success)
 	{
-		return(TRUE);
+		return(true);
 	}
 	else
 	{
 		Serial.println("Comms read error");
-		return(FALSE);
+		return(false);
 	}
 }
 
@@ -321,7 +321,7 @@ uint8_t IQS550::I2C_Write2(uint16_t ui16RegisterAddress, uint8_t *pData, uint8_t
   Wire.write((uint8_t)ui16RegisterAddress);
   Wire.write(pData, ui8NoOfBytes);
   Wire.endTransmission();
-  return(TRUE);
+  return(true);
 }
 
 uint8_t IQS550::I2C_Read2(uint16_t ui16RegisterAddress, uint8_t *pData, uint8_t ui8NoOfBytes)
@@ -343,7 +343,7 @@ uint8_t IQS550::I2C_Read2(uint16_t ui16RegisterAddress, uint8_t *pData, uint8_t 
     }
 
 
-  return(TRUE);
+  return(true);
 }
 
 void IQS550::RDY_wait() 
