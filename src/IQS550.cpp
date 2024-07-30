@@ -1,12 +1,5 @@
 #include <IQS550.h>
 
-extern uint8_t 	Data_Buff[44];
-extern uint16_t	ui16SnapStatus[15], ui16PrevSnap[15];;
-
-uint16_t 	ui16Timeout = 100;  // Timeout on i2c in ms
-uint8_t 	ui8Success;
-uint32_t 	ui32StartTime;
-
 IQS550::IQS550(uint8_t address, uint8_t readyPin, uint8_t resetPin)
 {
     x = 0;
@@ -28,11 +21,32 @@ void IQS550::begin()
     delay(20);
 }
 
+void IQS550::I2C_Setup(void)
+{
+  Wire.begin();
+  Wire.setClock(400000);
+}
+
 void IQS550::AcknowledgeReset(void) 
 {
     static uint8_t System_ctrl_0 = ACK_RESET;  
 
 	I2C_Write(SystemControl0_adr, &System_ctrl_0, 1);
+}
+
+void IQS550::RDY_wait() 
+{
+	while(digitalRead(this->ready_pin) == 0)
+	{
+        ;
+	}
+}
+
+void IQS550::Close_Comms() 
+{
+  uint8_t ui8DataBuffer[1];
+  
+  I2C_Write(END_WINDOW, &ui8DataBuffer[0], 1);
 }
 
 
@@ -97,6 +111,26 @@ void IQS550::Process_XY(void)
 	ui8SystemFlags[0] = Data_Buff[2];
 	ui8SystemFlags[1] = Data_Buff[3];
 	ui8NoOfFingers = Data_Buff[4];
+
+	uint8_t		ui8TempData[30];
+
+	this->RDY_wait();
+	
+	this->I2C_Read(GestureEvents0_adr, &Data_Buff[0], 44);
+
+	if((Data_Buff[3] & SNAP_TOGGLE) != 0)
+	{
+		this->I2C_Read(SnapStatus_adr, &ui8TempData[0], 30);
+		for(i = 0; i < 15; i++)
+		{
+			ui16PrevSnap[i] = ui16SnapStatus[i];
+			ui16SnapStatus[i] = ((uint16_t)(ui8TempData[2*i])<<8) + 
+								 (uint16_t)ui8TempData[(2*i)+1];
+		}
+	}
+	this->Close_Comms();
+
+
 	//
 	// Re-initialize the device if unexpected RESET detected
 	//
@@ -254,11 +288,7 @@ void IQS550::Print_unsigned(uint16_t ui16Num)
 }
 
 
-void IQS550::I2C_Setup(void)
-{
-	Wire.begin();
-  Wire.setClock(400000);
-}
+
  
 
 uint8_t IQS550::I2C_Write(uint16_t ui16RegisterAddress, uint8_t *pData, uint8_t ui8NoOfBytes)
@@ -344,19 +374,4 @@ uint8_t IQS550::I2C_Read2(uint16_t ui16RegisterAddress, uint8_t *pData, uint8_t 
 
 
   return(true);
-}
-
-void IQS550::RDY_wait() 
-{
-	while(digitalRead(this->ready_pin) == 0)
-	{
-        ;
-	}
-}
-
-void IQS550::Close_Comms() 
-{
-  uint8_t ui8DataBuffer[1];
-  
-  I2C_Write(END_WINDOW, &ui8DataBuffer[0], 1);
 }
