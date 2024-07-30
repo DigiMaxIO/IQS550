@@ -40,13 +40,13 @@ public:
 	void I2C_Setup();
 	uint8_t I2C_Write(uint16_t registerAddress, uint8_t *data, uint8_t numberBytes);
 	uint8_t I2C_Read(uint16_t registerAddress, uint8_t *data, uint8_t numberBytes);
-	uint8_t I2C_Write2(uint16_t ui16RegisterAddress, uint8_t *pData, uint8_t ui8NoOfBytes);
-	uint8_t I2C_Read2(uint16_t ui16RegisterAddress, uint8_t *pData, uint8_t ui8NoOfBytes);
 	void RDY_wait();
 	void Close_Comms();
 	
 	
 private:
+	uint8_t I2C_Write2(uint16_t ui16RegisterAddress, uint8_t *pData, uint8_t ui8NoOfBytes);
+	uint8_t I2C_Read2(uint16_t ui16RegisterAddress, uint8_t *pData, uint8_t ui8NoOfBytes);
 	uint8_t i2cDeviceAddr;
 	uint8_t ready_pin;
 	uint8_t reset_pin;
